@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace NoteApp;
 
+use NoteApp\Exception\ConfigException;
+
 require_once("View.php");
 require_once("Database.php");
+require_once("src/Exception/ConfigException.php");
 
 class Controller
 {
@@ -22,7 +25,10 @@ class Controller
   }
 
   public function __construct(array $request)
-  {
+  { 
+    if(empty(self::$configuration['db'])) {
+      throw new ConfigException('Wrong configuration data');
+    }
     $db = new Database(self::$configuration['db']);
     $this->request = $request;
     $this->view = new View();
