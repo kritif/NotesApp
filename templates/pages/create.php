@@ -1,10 +1,6 @@
 <section class="formSection">
   <h3>New note</h3>
   <div>
-    <?php if($params['created']) : ?>
-      <div>Title: <?php echo $params['title'] ?></div>
-      <div>Description: <?php echo $params['description'] ?></div>
-    <?php else: ?>
     <form class="note-form" action="/?action=create" method="post">
       <ul>
         <li>
@@ -22,6 +18,5 @@
         </li>
       </ul>
     </form>
-    <?php endif ?>
   </div>
 </section>

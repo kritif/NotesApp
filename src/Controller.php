@@ -18,6 +18,7 @@ class Controller
 
   private array $request;
   private View $view;
+  private Database $database;
 
   public static function initConfiguration(array $config):void
   {
@@ -29,7 +30,7 @@ class Controller
     if(empty(self::$configuration['db'])) {
       throw new ConfigException('Wrong configuration data');
     }
-    $db = new Database(self::$configuration['db']);
+    $this->database = new Database(self::$configuration['db']);
     $this->request = $request;
     $this->view = new View();
   }
@@ -41,16 +42,16 @@ class Controller
     switch ($this->action()) {
       case 'create':
         $page = 'create';
-        $created = false;
         $data = $this->getRequestPost();
-        if (!empty($data)) {
-          $viewParams = [
-            'title' => $data['title'] ?? '',
-            'description' => $data['description'] ?? ''
-          ];
-          $created = true;
+        if (!empty($data)) {         
+          $this->database->createNote(
+            [
+              'title' => $data['title'],
+              'description' => $data['description']
+            ]
+          );
+          header('Location: /?before=created');
         }
-        $viewParams['created'] = $created;
         break;
       case 'show':
         $viewParams = [
@@ -60,7 +61,10 @@ class Controller
         break;
       default:
         $page = 'list';
-        $viewParams['resultList'] = 'list';
+
+        $data = $this->getRequestGet();
+
+        $viewParams['before'] = $data['before'] ?? null;
         break;
     };
 
