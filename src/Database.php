@@ -52,6 +52,19 @@ class Database
     }    
   }
 
+  public function getNoteList():array
+  {
+    try {
+
+      $query = "SELECT id, title FROM notestable";
+      $result = $this->conn->query($query, PDO::FETCH_ASSOC); // drugi parametr określa w jakim formacie dane będą zwrócne
+      return $result->fetchAll(); // tutaj też można określić format fetchowania
+    
+    } catch (Throwable $e) {
+      throw new StorageException('Note list fetch error',400,$e);
+    }   
+  }
+
   private function createConnection(array $config): void
   {
     $dsn = "mysql:dbname={$config['database']};host={$config['host']}";    

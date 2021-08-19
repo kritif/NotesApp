@@ -63,7 +63,7 @@ class Controller
         $page = 'list';
 
         $data = $this->getRequestGet();
-
+        $this->database->getNoteList();
         $viewParams['before'] = $data['before'] ?? null;
         break;
     };
