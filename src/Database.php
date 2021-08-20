@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace NoteApp;
 
 require_once('Exception/StorageException.php');
+require_once('Exception/NotFoundException.php');
 require_once('Exception/ConfigException.php');
 
 use NoteApp\Exception\ConfigException;
+use NoteApp\Exception\NotFoundException;
 use NoteApp\Exception\StorageException;
 use PDO;
 use PDOException;
@@ -52,17 +54,35 @@ class Database
     }    
   }
 
-  public function getNoteList():array
+  public function getNoteList(): array
   {
     try {
 
-      $query = "SELECT id, title FROM notestable";
+      $query = "SELECT id, title, created FROM notestable";
       $result = $this->conn->query($query, PDO::FETCH_ASSOC); // drugi parametr określa w jakim formacie dane będą zwrócne
       return $result->fetchAll(); // tutaj też można określić format fetchowania
     
     } catch (Throwable $e) {
       throw new StorageException('Note list fetch error',400,$e);
     }   
+  }
+
+  public function getNote(int $id): array
+  {
+    try {
+      $query = "SELECT title, description, created FROM notestable WHERE id = $id";
+      $result = $this->conn->query($query, PDO::FETCH_ASSOC);
+      $note = $result->fetch();
+      
+    
+    } catch (Throwable $e) {
+      throw new StorageException('Signle note fetch error',400,$e);
+    } 
+    if(!$note) {
+      throw new NotFoundException("Note with id: $id not found");
+      exit('Note found exception');
+    }
+    return $note;
   }
 
   private function createConnection(array $config): void

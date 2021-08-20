@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace NoteApp;
 
 use NoteApp\Exception\ConfigException;
+use NoteApp\Exception\NotFoundException;
 
 require_once("View.php");
 require_once("Database.php");
@@ -37,8 +38,6 @@ class Controller
 
   public function run(): void
   { 
-    $viewParams = [];
-
     switch ($this->action()) {
       case 'create':
         $page = 'create';
@@ -54,21 +53,41 @@ class Controller
         }
         break;
       case 'show':
+        $page = 'show';
+        $data = $this->getRequestGet();
+        $noteId = (int) ($data['id'] ?? null);
+
+        if(!$noteId) {
+          dump($noteId);
+          header('Location: /?error=missingNoteId');
+          exit;
+        }
+        
+        try {
+          $note = $this->database->getNote($noteId);
+        } catch(NotFoundException $e) {
+          header('Location: /?error=noteNotFound');
+          exit;
+        }
+
         $viewParams = [
-          'title' => 'Title',
-          'description' => 'Description'
+          'note' => $note
         ];
         break;
       default:
         $page = 'list';
 
         $data = $this->getRequestGet();
-        $this->database->getNoteList();
-        $viewParams['before'] = $data['before'] ?? null;
+        
+        $viewParams = [
+          'before' => $data['before'] ?? null,
+          'error' => $data['error'] ?? null,
+          'notes' => $this->database->getNoteList()
+        ];
         break;
     };
 
-    $this->view->render($page, $viewParams);
+    $this->view->render($page, $viewParams ?? []);
   }
 
   private function getRequestPost(): array
