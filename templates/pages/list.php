@@ -23,6 +23,9 @@
           case 'edited':
             echo 'Note updated successful.';
             break;
+          case 'deleted':
+            echo 'Note delete successful.';
+            break;
         }
       }; 
     ?>

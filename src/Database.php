@@ -98,6 +98,16 @@ class Database
     }
   }
 
+  public function deleteNote(int $id): void
+  {
+    try {
+      $query = "DELETE FROM notestable WHERE id = $id";
+      $this->conn->exec($query);
+    } catch (Throwable $e) {
+      throw new StorageException('Delete note fail', 400, $e);
+    }
+  }
+
   private function createConnection(array $config): void
   {
     $dsn = "mysql:dbname={$config['database']};host={$config['host']}";    

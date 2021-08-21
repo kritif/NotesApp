@@ -9,6 +9,9 @@
   <a href="/?action=edit&id=<?php echo $note['id'] ?>" style="text-decoration: none">
     <button>Edit note</button>
   </a>
+  <a href="/?action=delete&id=<?php echo $note['id'] ?>" style="text-decoration: none">
+    <button>Delete note</button>
+  </a>
   <?php else: ?>
     <div>
       No notes to display.

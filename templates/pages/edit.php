@@ -13,9 +13,7 @@
           <label>Description</label>
           <textarea type="text" name="description" 
           class="field-long field-textarea"
-          id="field5">
-            <?php echo $note['title'] ?? ''?>
-          </textarea>
+          id="field5"><?php echo $note['title'] ?? ''?></textarea>
         </li>
         <li>
           <input type="submit" value="Save"/>

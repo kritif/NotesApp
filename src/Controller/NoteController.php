@@ -53,6 +53,13 @@ class NoteController extends AbstractController
     );
   }
 
+  public function deleteAction()
+  {   
+    $noteId = (int) $this->request->getParam('id');
+    $this->database->deleteNote($noteId);
+    $this->redirect('/',['before' => 'deleted']);
+  }
+
   public function editAction()
   {
     if ($this->request->isPost()) {
@@ -66,6 +73,7 @@ class NoteController extends AbstractController
       $this->redirect('/',['before' => 'edited']);
 
     } else if($this->request->isGet()) {
+
       $noteId = (int) $this->request->getParam('id');
       try {
         $note = $this->database->getNote($noteId);
