@@ -44,7 +44,7 @@ abstract class AbstractController
     $this->$action(); 
   }
 
-  protected function redirect(string $to, array $params): void
+  final protected function redirect(string $to, array $params): void
   {
     $location = $to;
     $queryParams = [];

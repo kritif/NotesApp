@@ -54,6 +54,9 @@
               <a href="/?action=show&id=<?php echo $note['id'] ?>" style="text-decoration: none"> 
                 <button>Show</button> 
               </a>
+              <a href="/?action=delete&id=<?php echo $note['id'] ?>" style="text-decoration: none">
+                <button>Delete</button>
+              </a>
             </td>
           </tr>
         <?php endforeach; ?>

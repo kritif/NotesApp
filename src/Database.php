@@ -101,7 +101,7 @@ class Database
   public function deleteNote(int $id): void
   {
     try {
-      $query = "DELETE FROM notestable WHERE id = $id";
+      $query = "DELETE FROM notestable WHERE id = $id LIMIT 1";
       $this->conn->exec($query);
     } catch (Throwable $e) {
       throw new StorageException('Delete note fail', 400, $e);

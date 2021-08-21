@@ -8,7 +8,7 @@ use NoteApp\Exception\NotFoundException;
 
 class NoteController extends AbstractController
 {  
-  public function createAction()
+  public function createAction(): void
   {
     if ($this->request->hasPost()) {         
       $this->database->createNote(
@@ -22,7 +22,62 @@ class NoteController extends AbstractController
     $this->view->render('create');
   }
 
-  public function showAction()
+  public function showAction(): void
+  {
+    $this->view->render(
+      'show', 
+      ['note' => $this->getNoteData()]);
+  }
+
+  public function listAction(): void
+  {      
+    $this->view->render(
+      'list', 
+      [
+        'before' => $this->request->getParam('before'),
+        'error' => $this->request->getParam('error'),
+        'notes' => $this->database->getNoteList()
+      ]
+    );
+  }
+
+  public function deleteAction(): void
+  { 
+    if($this->request->isPost()) {
+      $noteId = (int) $this->request->postParam('id');
+      $this->database->deleteNote($noteId);
+      $this->redirect('/',['before' => 'deleted']);
+    } else {
+      $this->view->render(
+        'delete', 
+        ['note' => $this->getNoteData()]
+      );   
+    }
+  }
+
+  public function editAction(): void
+  {
+    if ($this->request->isPost()) {
+      $noteId = (int) $this->request->postParam('id');
+
+      $noteData = [
+        'title' => $this->request->postParam('title'),
+        'description' => $this->request->postParam('description')
+      ];
+      $this->database->editNote($noteId,$noteData);
+      $this->redirect('/',['before' => 'edited']);
+
+    } else if($this->request->isGet()) {
+   
+      $this->view->render(
+        'edit', 
+        ['note' => $this->getNoteData()]
+      );  
+    }
+
+  }
+
+  private function getNoteData(): array
   {
     $noteId = (int) $this->request->getParam('id');
     if(!$noteId) {
@@ -36,58 +91,6 @@ class NoteController extends AbstractController
       $this->redirect('/',['error' => 'noteNotFound']);
     }
 
-    $this->view->render(
-      'show', 
-      ['note' => $note]);
-  }
-
-  public function listAction()
-  {      
-    $this->view->render(
-      'list', 
-      [
-        'before' => $this->request->getParam('before'),
-        'error' => $this->request->getParam('error'),
-        'notes' => $this->database->getNoteList()
-      ]
-    );
-  }
-
-  public function deleteAction()
-  {   
-    $noteId = (int) $this->request->getParam('id');
-    $this->database->deleteNote($noteId);
-    $this->redirect('/',['before' => 'deleted']);
-  }
-
-  public function editAction()
-  {
-    if ($this->request->isPost()) {
-      $noteId = (int) $this->request->postParam('id');
-
-      $noteData = [
-        'title' => $this->request->postParam('title'),
-        'description' => $this->request->postParam('description')
-      ];
-      $this->database->editNote($noteId,$noteData);
-      $this->redirect('/',['before' => 'edited']);
-
-    } else if($this->request->isGet()) {
-
-      $noteId = (int) $this->request->getParam('id');
-      try {
-        $note = $this->database->getNote($noteId);
-      } catch(NotFoundException $e) {
-        $this->redirect('/',['error' => 'noteNotFound']);
-      }
-  
-      $this->view->render(
-        'edit', 
-        ['note' => $note]
-      );  
-    }
-    if(!$noteId) {
-      $this->redirect('/',['error' => 'missingNoteId']);
-    } 
+    return $note;
   }
 }
