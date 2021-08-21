@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace NoteApp\Controller;
 
-use NoteApp\Exception\ConfigException;
 use NoteApp\Request;
 use NoteApp\View;
 use NoteApp\Database;
+use NoteApp\Exception\ConfigException;
 
 abstract class AbstractController 
 {
@@ -42,6 +42,22 @@ abstract class AbstractController
       $action = self::DEFAULT_ACTION . 'Action';
     }
     $this->$action(); 
+  }
+
+  protected function redirect(string $to, array $params): void
+  {
+    $location = $to;
+    $queryParams = [];
+    if(count($params)){
+      foreach($params as $key => $value) {
+        $queryParams[] = urlencode($key) . '=' . urlencode($value);
+      }
+      $queryParams = implode('&', $queryParams);
+      $location .= '?' . $queryParams;
+    }
+    
+    header("Location: $location");
+    exit;
   }
 
   private function action(): string

@@ -20,6 +20,9 @@
           case 'created': 
             echo 'Note created successful.';
             break;
+          case 'edited':
+            echo 'Note updated successful.';
+            break;
         }
       }; 
     ?>

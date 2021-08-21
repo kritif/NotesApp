@@ -18,7 +18,7 @@ use Throwable;
 
 $configuration = require_once("config/config.php");
 
-$request = new Request($_GET, $_POST);
+$request = new Request($_GET, $_POST, $_SERVER);
 
 try {
   AbstractController::initConfiguration($configuration);
