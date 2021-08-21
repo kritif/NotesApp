@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace NoteApp;
 
-require_once('Exception/StorageException.php');
-require_once('Exception/NotFoundException.php');
-require_once('Exception/ConfigException.php');
-
 use NoteApp\Exception\ConfigException;
 use NoteApp\Exception\NotFoundException;
 use NoteApp\Exception\StorageException;

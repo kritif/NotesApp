@@ -19,9 +19,11 @@ class View
     foreach($params as $key => $param) {
       if(is_array($param)) {
         $clearParams[$key] = $this->escape($param);
-      } else {
+      } else if($param) {
         $clearParams[$key] = htmlentities($param);
-      }  
+      } else {
+        $clearParams[$key] = $param;
+      }
     }
 
     return $clearParams;

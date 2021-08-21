@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace NoteApp;
 
-require_once('src/Exception/AppException.php');
-require_once('src/Exception/ConfigException.php');
-require_once("src/Utils/debug.php");
-require_once("src/Controller/NoteController.php");
-require_once("src/Controller/AbstractController.php");
-require_once("src/Request.php");
+spl_autoload_register(function (string $name) {
+  $path = str_replace('\\','/', $name);
+  $path = str_replace('NoteApp','src', $name);
+  require_once($path . '.php');
+});
 
 use NoteApp\Controller\NoteController;
 use NoteApp\Controller\AbstractController;
