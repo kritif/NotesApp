@@ -39,10 +39,16 @@
   $size = $pageParams['size'] ?? 10;
   $page = $pageParams['number'] ?? 1;
   $pages = $pageParams['pages'] ?? 1;
+
+  $phrase = $pageParams['phrase'] ?? null;
+  $paginationUrl = "&sortby=$by&sortorder=$order&page_size=$size&phrase=$phrase"
   ?>
 
   <div>
     <form class="settings-form" action="/" method="GET">
+    <div>
+      <label>Search: <input type="text" name="phrase" value="<?php echo $phrase?>"></label>
+    </div>
       <div>
         <div>Sort by:</div>
         <label>Title: <input name="sortby" type="radio" value="title" <?php echo $by == 'title' ? 'checked' : '' ?> /></label>
@@ -99,7 +105,7 @@
   <ul class="pagination">
     <?php if ($page !== 1) : ?>
       <li>
-        <a href="<?php echo "/?sortby=$by&sortorder=$order&page_size=$size&page_number=1" ?>">
+        <a href="<?php echo '/?page_number=1'.$paginationUrl ?>">
           <button>
             <<
           </button>
@@ -108,14 +114,14 @@
     <?php endif; ?>
     <?php for ($i = 1; $i <= $pages; $i++) : ?>
       <li>
-        <a href="<?php echo "/?sortby=$by&sortorder=$order&page_size=$size&page_number=$i" ?>">
+        <a href="<?php echo '/?page_number='.$i.$paginationUrl ?>">
           <button style="color: <?php echo $i === $page ? "black" : "white"?>"><?php echo $i ?></button>
         </a>
       </li>
     <?php endfor; ?>
     <?php if ($page !== $pages) : ?>
       <li>
-        <a href="<?php echo "/?sortby=$by&sortorder=$order&page_size=$size&page_number=$pages" ?>">
+        <a href="<?php echo '/?page_number='.$pages.$paginationUrl ?>">
           <button>
             >>
           </button>

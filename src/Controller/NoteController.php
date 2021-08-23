@@ -37,21 +37,33 @@ class NoteController extends AbstractController
     $pageSize = (int) $this->request->getParam('page_size', self::PAGE_SIZE);
     $sortBy = $this->request->getParam('sortby', 'title');
     $sortOrder = $this->request->getParam('sortorder', 'desc');
+    $phrase = $this->request->getParam('phrase');
 
     if(!in_array($pageSize, [1, 5, 10, 25])) {
       $pageSize = self::PAGE_SIZE;
     }
 
-    $notesCount = $this->database->getNotesCount();
+    if($phrase) {
+      $notesCount = $this->database->getSearchCount($phrase);
+      $notes = $this->database->searchNotes($phrase, $sortBy, $sortOrder, $pageSize, $pageNumber);
+    } else {
+      $notesCount = $this->database->getNotesCount();
+      $notes = $this->database->getNoteList($sortBy, $sortOrder, $pageSize, $pageNumber);
+    }  
 
     $this->view->render(
       'list', 
       [
-        'page' => ['number' => $pageNumber, 'size' => $pageSize, 'pages' => (int) ceil($notesCount/$pageSize)],
+        'page' => [
+          'number' => $pageNumber, 
+          'size' => $pageSize, 
+          'pages' => (int) ceil($notesCount/$pageSize),
+          'phrase' => $phrase
+        ],
         'sort' => ['by' =>  $sortBy, 'order' =>  $sortOrder],
         'before' => $this->request->getParam('before'),
         'error' => $this->request->getParam('error'),
-        'notes' => $this->database->getNoteList($sortBy, $sortOrder, $pageSize, $pageNumber)
+        'notes' => $notes
       ]
     );
   }

@@ -50,6 +50,57 @@ class Database
     }    
   }
 
+  public function searchNotes(
+    string $phrase,
+    string $sortBy, 
+    string $sortOrder, 
+    int $pageSize, 
+    int $pageNumber
+  ): array {
+    try {
+      $phrase = $this->conn->quote('%' . $phrase . '%');
+
+      if(!in_array($sortBy, ['created','title'])) {
+        $sortBy = 'title';
+      }
+      if(!in_array($sortOrder, ['asc','desc'])) {
+        $sortOrder = 'desc';
+      }
+      
+      $offset = ($pageNumber-1) * $pageSize;
+
+      $query = "
+        SELECT id, title, created 
+        FROM notestable
+        WHERE title LIKE ($phrase)
+        ORDER BY $sortBy $sortOrder
+        LIMIT $offset, $pageSize
+      ";
+      $result = $this->conn->query($query, PDO::FETCH_ASSOC); // drugi parametr określa w jakim formacie dane będą zwrócne
+      return $result->fetchAll(); // tutaj też można określić format fetchowania
+    
+    } catch (Throwable $e) {
+      throw new StorageException('Search notes fetch error',400,$e);
+    }  
+  }
+
+  public function getSearchCount(string $phrase): int
+  {
+    try {
+      $phrase = $this->conn->quote('%' . $phrase . '%');
+      $query = "SELECT count(*) AS cn FROM notestable WHERE title LIKE $phrase";
+      $result = $this->conn->query($query, PDO::FETCH_ASSOC);
+
+      if($result == false) {
+        throw new StorageException('Notes count fetch error',400);
+      };
+      return (int) $result->fetch()['cn']; 
+    
+    } catch (Throwable $e) {
+      throw new StorageException('Notes count fetch error',400,$e);
+    }
+  }
+
   public function getNoteList(
     string $sortBy, 
     string $sortOrder, 
