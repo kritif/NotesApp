@@ -50,8 +50,12 @@ class Database
     }    
   }
 
-  public function getNoteList(string $sortBy, string $sortOrder): array
-  {
+  public function getNoteList(
+    string $sortBy, 
+    string $sortOrder, 
+    int $pageSize, 
+    int $pageNumber
+  ): array {
     try {
       if(!in_array($sortBy, ['created','title'])) {
         $sortBy = 'title';
@@ -59,17 +63,36 @@ class Database
       if(!in_array($sortOrder, ['asc','desc'])) {
         $sortOrder = 'desc';
       }
+      
+      $offset = ($pageNumber-1) * $pageSize;
 
       $query = "
         SELECT id, title, created 
         FROM notestable
         ORDER BY $sortBy $sortOrder
+        LIMIT $offset, $pageSize
       ";
       $result = $this->conn->query($query, PDO::FETCH_ASSOC); // drugi parametr określa w jakim formacie dane będą zwrócne
       return $result->fetchAll(); // tutaj też można określić format fetchowania
     
     } catch (Throwable $e) {
       throw new StorageException('Note list fetch error',400,$e);
+    }   
+  }
+
+  public function getNotesCount(): int 
+  {
+    try {
+      $query = "SELECT count(*) AS cn FROM notestable";
+      $result = $this->conn->query($query, PDO::FETCH_ASSOC);
+
+      if($result == false) {
+        throw new StorageException('Notes count fetch error',400);
+      };
+      return (int) $result->fetch()['cn']; 
+    
+    } catch (Throwable $e) {
+      throw new StorageException('Notes count fetch error',400,$e);
     }   
   }
 
