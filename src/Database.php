@@ -50,11 +50,21 @@ class Database
     }    
   }
 
-  public function getNoteList(): array
+  public function getNoteList(string $sortBy, string $sortOrder): array
   {
     try {
+      if(!in_array($sortBy, ['created','title'])) {
+        $sortBy = 'title';
+      }
+      if(!in_array($sortOrder, ['asc','desc'])) {
+        $sortOrder = 'desc';
+      }
 
-      $query = "SELECT id, title, created FROM notestable";
+      $query = "
+        SELECT id, title, created 
+        FROM notestable
+        ORDER BY $sortBy $sortOrder
+      ";
       $result = $this->conn->query($query, PDO::FETCH_ASSOC); // drugi parametr określa w jakim formacie dane będą zwrócne
       return $result->fetchAll(); // tutaj też można określić format fetchowania
     
