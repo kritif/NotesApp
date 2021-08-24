@@ -6,7 +6,7 @@ namespace NoteApp\Controller;
 
 use NoteApp\Request;
 use NoteApp\View;
-use NoteApp\Database;
+use NoteApp\Model\NoteModel;
 use NoteApp\Exception\ConfigException;
 use NoteApp\Exception\StorageException;
 use NoteApp\Exception\NotFoundException;
@@ -19,7 +19,7 @@ abstract class AbstractController
 
   protected Request $request;
   protected View $view;
-  protected Database $database;
+  protected NoteModel $noteModel;
 
   public static function initConfiguration(array $config):void
   {
@@ -31,7 +31,7 @@ abstract class AbstractController
     if(empty(self::$configuration['db'])) {
       throw new ConfigException('Wrong configuration data');
     }
-    $this->database = new Database(self::$configuration['db']);
+    $this->noteModel = new NoteModel(self::$configuration['db']);
     $this->request = $request;
     $this->view = new View();
   }
